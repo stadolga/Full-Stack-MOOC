@@ -3,38 +3,38 @@ const express = require('express')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
-const Person = require('./models/person');
+const Person = require('./models/person')
 
 morgan.token('body', function (req, res, param) {
   return JSON.stringify(req.body)
 })
-
-app.use(cors())
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(express.static('build'))
 app.use(express.json())
+app.use(cors())
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
 
 
 app.get('/info', (req, response) => {
-    Person.find({})
+  Person.find({})
     .then(persons => {
       response.send(`
       <p>Phonebook has info for ${persons.length} people</p>
       <p>${new Date().toString()}</p>
-    `);
+    `)
     })
-  });
-  
+})
+
 
 app.post('/api/persons', (request, response, next) => {
-    // const names = Person.find({}).then(r => {
-    //     return r.map(person => person.name);
-    //   });
-    const body = request.body
+  // const names = Person.find({}).then(r => {
+  //     return r.map(person => person.name);
+  //   });
+  const body = request.body
 
-    if(!body.name && !body.number){
-      response.status(400).end()
-    }
+  if(!body.name && !body.number){
+    response.status(400).end()
+  }
 
   const person = new Person({
     name: body.name,
@@ -43,41 +43,41 @@ app.post('/api/persons', (request, response, next) => {
 
   person.save()
     .then(savedNote => {
-      response.json(savedNote);
+      response.json(savedNote)
     })
     .catch((error) => {
-      next(error);
-    });
-});
-
-app.get('/api/persons', (req, response) => {
-  console.log("here")
-    Person.find({})
-    .then(persons => {
-        response.json(persons)
-      })
-      .catch(error => next(error))
+      next(error)
     })
+})
 
-app.delete('/api/persons/:id', (request, response) => {
+app.get('/api/persons', (req, response, next) => {
+  console.log('here')
+  Person.find({})
+    .then(persons => {
+      response.json(persons)
+    })
+    .catch(error => next(error))
+})
+
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-  .then(result => {
-    response.status(204).end()
-  })
-  .catch(error => next(error))
+    .then(res => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
 
   Person.findById(request.params.id)
-  .then(person => {
-    if (person) {
-      response.json(person)
-    } else {
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
         response.status(404).end()
-    }
-  })
-  .catch(error => next(error))
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -87,11 +87,11 @@ app.put('/api/persons/:id', (request, response, next) => {
     name: body.name,
     number: body.number,
   }
-  console.log("pre", person)
+  console.log('pre', person)
 
-  Person.findByIdAndUpdate(request.params.id, person, {new: true, runValidators: true, context: 'query' })
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
     .then(updatedNote => {
-      console.log(updatedNote, "!")
+      console.log(updatedNote, '!')
       response.json(updatedNote)
     })
     .catch(error => next(error))

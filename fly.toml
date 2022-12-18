@@ -1,6 +1,6 @@
-# fly.toml file generated for black-silence-7125 on 2022-12-17T22:02:35+02:00
+# fly.toml file generated for dawn-pine-9619 on 2022-12-18T16:31:45+02:00
 
-app = "black-silence-7125"
+app = "dawn-pine-9619"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
