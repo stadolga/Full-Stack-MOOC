@@ -14,11 +14,20 @@ mongoose.connect(url)
   const personSchema = new mongoose.Schema({
     name: {
       type: String,
+      minlength: 3,
       required: true
     },
     number: {
       type: String,
-      required: true
+      minlength: 8,
+      required: true,
+      validate: value => {
+        console.log("muijii stadis core", value)
+        if (!/^\d{2,3}-\d+$/.test(value)) {
+          throw new Error('Invalid number format');
+        }
+        return true;
+      }
     },
   })
   
